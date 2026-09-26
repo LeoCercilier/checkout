@@ -1,0 +1,18 @@
+node_modules/
+.env
+*.log
+.DS_Store
+
+node_modules/
+.env
+src/.env
+
+node_modules/
+.env
+src/.env
+
+# Arquivos de ambiente e segredos
+.env
+.env.*
+src/.env
+src/.env.*

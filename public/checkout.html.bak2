@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Meu Infoproduto</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #18202a;
+    }
+
+    .topo {
+      background: #111827;
+      color: white;
+      padding: 22px 18px;
+      text-align: center;
+    }
+
+    .topo strong {
+      font-size: 20px;
+    }
+
+    .topo small {
+      display: block;
+      margin-top: 5px;
+      color: #cbd5e1;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 25px auto;
+      padding: 0 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.07);
+    }
+
+    .oferta {
+      font-size: 13px;
+      font-weight: bold;
+      color: #2563eb;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 25px;
+      margin: 5px 0 10px;
+    }
+
+    .descricao {
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .preco {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .beneficios {
+      padding-left: 20px;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #16a34a;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .mensagem {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      display: none;
+      background: #f1f5f9;
+    }
+
+    #resultado {
+      display: none;
+      text-align: center;
+    }
+
+    #qrcode {
+      max-width: 280px;
+      width: 100%;
+      margin: 15px auto;
+      border-radius: 10px;
+    }
+
+    .pix-box {
+      text-align: left;
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 15px;
+    }
+
+    #pixCopiaCola {
+      width: 100%;
+      min-height: 100px;
+      resize: none;
+      font-size: 13px;
+    }
+
+    .botao-copiar {
+      background: #2563eb;
+      margin-top: 8px;
+    }
+
+    .seguro {
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+      margin-top: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topo">
+    <strong>Meu Infoproduto</strong>
+    <small>Checkout seguro</small>
+  </header>
+
+  <main class="container">
+
+    <section class="card">
+      <div class="oferta">Oferta especial</div>
+
+      <h1>Meu Infoproduto</h1>
+
+      <p class="descricao">
+        Acesso ao conteúdo completo do seu infoproduto.
+      </p>
+
+      <div class="preco">R$ 19,90</div>
+
+      <ul class="beneficios">
+        <li>Acesso ao conteúdo digital</li>
+        <li>Pagamento rápido por Pix</li>
+        <li>Liberação após confirmação</li>
+      </ul>
+    </section>
+
+    <section class="card" id="checkoutCard">
+
+      <label for="email">Seu melhor e-mail</label>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="voce@email.com"
+        autocomplete="email"
+      >
+
+      <button id="btnPagar" onclick="criarPix()">
+        Pagar com Pix
+      </button>
+
+      <div id="mensagem" class="mensagem"></div>
+
+      <div class="seguro">
+        Pagamento processado com segurança pelo Mercado Pago.
+      </div>
+
+    </section>
+
+    <section class="card" id="resultado">
+
+      <h2>Pix gerado!</h2>
+
+      <p>
+        Escaneie o QR Code com o aplicativo do seu banco.
+      </p>
+
+      <img id="qrcode" alt="QR Code Pix">
+
+      <div class="pix-box">
+        <strong>Pix Copia e Cola</strong>
+
+        <textarea
+          id="pixCopiaCola"
+          readonly
+        ></textarea>
+
+        <button
+          class="botao-copiar"
+          onclick="copiarPix()"
+        >
+          Copiar código Pix
+        </button>
+      </div>
+
+      <p id="statusPagamento">
+        Aguardando pagamento...
+      </p>
+
+    </section>
+
+  </main>
+
+<script>
+async function criarPix() {
+
+  const email = document.getElementById('email').value.trim();
+  const botao = document.getElementById('btnPagar');
+  const mensagem = document.getElementById('mensagem');
+
+  if (!email || !email.includes('@')) {
+    mensagem.style.display = 'block';
+    mensagem.textContent = 'Digite um e-mail válido.';
+    return;
+  }
+
+  botao.disabled = true;
+  botao.textContent = 'Gerando Pix...';
+
+  mensagem.style.display = 'block';
+  mensagem.textContent = 'Criando seu pagamento Pix...';
+
+  try {
+
+    const resposta = await fetch('https://zrycyjntfifuucrnmcuq.supabase.co/functions/v1/criar-pagamento', {
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({
+        produto_id: 1,
+        email: email
+      })
+    });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok || !dados.sucesso) {
+      throw new Error(
+        dados.detalhe ||
+        dados.erro ||
+        'Não foi possível criar o Pix.'
+      );
+    }
+
+    if (!dados.qr_code_base64 && !dados.qr_code) {
+      throw new Error(
+        'O Mercado Pago criou o pagamento, mas não retornou o QR Code.'
+      );
+    }
+
+    const resultado = document.getElementById('resultado');
+    const qrCode = document.getElementById('qrcode');
+    const pix = document.getElementById('pixCopiaCola');
+
+    if (dados.qr_code_base64) {
+
+      qrCode.src =
+        dados.qr_code_base64.startsWith('data:')
+          ? dados.qr_code_base64
+          : `data:image/png;base64,${dados.qr_code_base64}`;
+
+      qrCode.style.display = 'block';
+
+    } else {
+
+      qrCode.style.display = 'none';
+
+    }
+
+    pix.value = dados.qr_code || '';
+
+    resultado.style.display = 'block';
+
+    mensagem.style.display = 'none';
+
+    document.getElementById('statusPagamento').textContent =
+      'Pagamento Pix criado. Aguardando confirmação.';
+
+    resultado.scrollIntoView({
+      behavior: 'smooth'
+    });
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    mensagem.style.display = 'block';
+    mensagem.textContent = erro.message;
+
+    botao.disabled = false;
+    botao.textContent = 'Pagar com Pix';
+  }
+}
+
+
+async function copiarPix() {
+
+  const campo = document.getElementById('pixCopiaCola');
+
+  if (!campo.value) {
+    return;
+  }
+
+  try {
+
+    await navigator.clipboard.writeText(campo.value);
+
+    const botao = document.querySelector('.botao-copiar');
+
+    botao.textContent = 'Código copiado!';
+
+    setTimeout(() => {
+      botao.textContent = 'Copiar código Pix';
+    }, 2000);
+
+  } catch (erro) {
+
+    campo.select();
+    document.execCommand('copy');
+
+  }
+}
+</script>
+
+</body>
+</html>

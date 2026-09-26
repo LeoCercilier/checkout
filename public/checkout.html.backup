@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Finalizar compra</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, #e9e7ff 0%, transparent 35%),
+        radial-gradient(circle at bottom right, #dff7f0 0%, transparent 35%),
+        #f6f7fb;
+
+      color: #171923;
+    }
+
+    .topbar {
+      padding: 22px 20px;
+      text-align: center;
+    }
+
+    .brand {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .secure {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #69707d;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .checkout {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 22px;
+    }
+
+    .card {
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(20,25,40,.07);
+      border-radius: 24px;
+      box-shadow:
+        0 20px 60px rgba(20, 25, 40, .08),
+        0 4px 12px rgba(20, 25, 40, .04);
+
+      padding: 30px;
+    }
+
+    .product-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #777f8f;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+
+    .description {
+      color: #687080;
+      line-height: 1.6;
+      font-size: 15px;
+      margin-bottom: 26px;
+    }
+
+    .price-box {
+      padding: 20px;
+      border-radius: 18px;
+      background: #f7f8fc;
+      border: 1px solid #eceef4;
+    }
+
+    .price-label {
+      font-size: 12px;
+      color: #777f8f;
+      margin-bottom: 5px;
+    }
+
+    .price {
+      font-size: 34px;
+      font-weight: 850;
+      letter-spacing: -1.5px;
+    }
+
+    .features {
+      margin-top: 26px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #454b58;
+    }
+
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #e9f8f2;
+      color: #15966a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .step-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #171923;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px 16px;
+      border: 1px solid #dfe2e9;
+      border-radius: 13px;
+      font-size: 15px;
+      outline: none;
+      transition: .2s;
+      background: white;
+    }
+
+    input:focus {
+      border-color: #171923;
+      box-shadow: 0 0 0 4px rgba(23,25,35,.06);
+    }
+
+    .pix-button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 17px;
+      border: 0;
+      border-radius: 14px;
+      background: #171923;
+      color: white;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .pix-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(23,25,35,.18);
+    }
+
+    .pix-button:disabled {
+      opacity: .6;
+      cursor: wait;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .security {
+      margin-top: 16px;
+      text-align: center;
+      color: #7a8190;
+      font-size: 11px;
+    }
+
+    .payment-result {
+      display: none;
+      margin-top: 25px;
+      padding-top: 25px;
+      border-top: 1px solid #eceef4;
+    }
+
+    .payment-result.active {
+      display: block;
+    }
+
+    .pix-title {
+      font-size: 19px;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .pix-subtitle {
+      color: #69707d;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .qr-wrapper {
+      width: 210px;
+      height: 210px;
+      margin: 0 auto 20px;
+      padding: 12px;
+      background: white;
+      border-radius: 18px;
+      border: 1px solid #e5e7ed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .copy-area {
+      display: flex;
+      gap: 8px;
+    }
+
+    .copy-area input {
+      min-width: 0;
+      background: #f7f8fc;
+      font-size: 12px;
+    }
+
+    .copy-button {
+      border: 0;
+      border-radius: 12px;
+      padding: 0 16px;
+      background: #171923;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .status {
+      display: none;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.error {
+      background: #fff0f0;
+      color: #b42318;
+    }
+
+    .status.success {
+      background: #eafaf3;
+      color: #137a55;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 25px 10px 35px;
+      color: #858b97;
+      font-size: 11px;
+    }
+
+    @media (max-width: 760px) {
+      .container {
+        padding: 10px 14px;
+      }
+
+      .checkout {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 23px;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      .price {
+        font-size: 30px;
+      }
+
+      .qr-wrapper {
+        width: 190px;
+        height: 190px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="brand">Seu Produto</div>
+    <div class="secure">🔒 Checkout seguro</div>
+  </header>
+
+  <main class="container">
+
+    <div class="checkout">
+
+      <!-- PRODUTO -->
+      <section class="card">
+
+        <div class="product-label">
+          Oferta especial
+        </div>
+
+        <h1>
+          Meu Infoproduto
+        </h1>
+
+        <p class="description">
+          Acesso ao conteúdo completo para você começar
+          imediatamente após a confirmação do pagamento.
+        </p>
+
+        <div class="price-box">
+          <div class="price-label">
+            Pagamento único
+          </div>
+
+          <div class="price">
+            R$ 19,90
+          </div>
+        </div>
+
+        <div class="features">
+
+          <div class="feature">
+            <span class="check">✓</span>
+            Acesso ao infoproduto
+          </div>
+
+          <div class="feature">
+            <span class="check">✓</span>
+            Pagamento rápido via Pix
+          </div>
+
+          <div class="feature">
+            <span class="check">✓</span>
+            Liberação após confirmação
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- CHECKOUT -->
+      <section class="card">
+
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-title">
+            Seus dados
+          </div>
+        </div>
+
+        <label for="email">
+          E-mail
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          placeholder="voce@exemplo.com"
+          autocomplete="email"
+        >
+
+        <button
+          id="pixButton"
+          class="pix-button"
+          onclick="criarPix()"
+        >
+          Pagar com Pix
+        </button>
+
+        <div class="security">
+          🔒 Seus dados são enviados com segurança.
+        </div>
+
+        <div id="status" class="status"></div>
+
+
+        <!-- RESULTADO PIX -->
+        <div id="paymentResult" class="payment-result">
+
+          <div class="pix-title">
+            Pix gerado
+          </div>
+
+          <div class="pix-subtitle">
+            Escaneie o QR Code com o aplicativo do seu banco
+            ou copie o código Pix abaixo.
+          </div>
+
+          <div class="qr-wrapper">
+            <img
+              id="qrCode"
+              alt="QR Code Pix"
+            >
+          </div>
+
+          <label>
+            Pix Copia e Cola
+          </label>
+
+          <div class="copy-area">
+
+            <input
+              id="pixCode"
+              readonly
+            >
+
+            <button
+              class="copy-button"
+              onclick="copiarPix()"
+            >
+              Copiar
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    Pagamento processado com segurança
+  </footer>
+
+
+  <script>
+
+    async function criarPix() {
+
+      const email = document
+        .getElementById('email')
+        .value
+        .trim();
+
+      const button = document
+        .getElementById('pixButton');
+
+      const status = document
+        .getElementById('status');
+
+      const result = document
+        .getElementById('paymentResult');
+
+      if (!email || !email.includes('@')) {
+
+        mostrarStatus(
+          'Digite um e-mail válido para continuar.',
+          'error'
+        );
+
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = 'Gerando Pix...';
+
+      status.className = 'status';
+      result.classList.remove('active');
+
+      try {
+
+        const resposta = await fetch(
+          '/api/pagamento/pix',
+          {
+            method: 'POST',
+
+            headers: {
+              'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+              valor: 19.90,
+              descricao: 'Meu Infoproduto',
+              email: email
+            })
+          }
+        );
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok || !dados.sucesso) {
+
+          throw new Error(
+            dados.erro || 'Não foi possível gerar o Pix.'
+          );
+        }
+
+        document
+          .getElementById('pixCode')
+          .value = dados.qr_code || '';
+
+        if (dados.qr_code_base64) {
+
+          document
+            .getElementById('qrCode')
+            .src =
+            'data:image/png;base64,' +
+            dados.qr_code_base64;
+
+        }
+
+        result.classList.add('active');
+
+        mostrarStatus(
+          'Pix gerado. Agora faça o pagamento pelo seu banco.',
+          'success'
+        );
+
+        button.textContent = 'Pix gerado';
+
+      } catch (erro) {
+
+        console.error(erro);
+
+        mostrarStatus(
+          erro.message ||
+          'Erro ao gerar o pagamento.',
+          'error'
+        );
+
+        button.disabled = false;
+        button.textContent = 'Pagar com Pix';
+      }
+    }
+
+
+    async function copiarPix() {
+
+      const campo =
+        document.getElementById('pixCode');
+
+      if (!campo.value) {
+        return;
+      }
+
+      try {
+
+        await navigator.clipboard
+          .writeText(campo.value);
+
+        mostrarStatus(
+          'Código Pix copiado!',
+          'success'
+        );
+
+      } catch (erro) {
+
+        campo.select();
+        document.execCommand('copy');
+
+        mostrarStatus(
+          'Código Pix copiado!',
+          'success'
+        );
+      }
+    }
+
+
+    function mostrarStatus(mensagem, tipo) {
+
+      const status =
+        document.getElementById('status');
+
+      status.textContent = mensagem;
+
+      status.className =
+        'status show ' + tipo;
+    }
+
+  </script>
+
+</body>
+</html>

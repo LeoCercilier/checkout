@@ -1,0 +1,183 @@
+require('dotenv').config({ path: __dirname + '/.env' });
+
+const express = require('express');
+const crypto = require('crypto');
+const { MercadoPagoConfig, Payment } = require('mercadopago');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.static('public'));
+
+const mpConfigured = !!process.env.MERCADOPAGO_ACCESS_TOKEN;
+
+const client = mpConfigured
+  ? new MercadoPagoConfig({
+      accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN
+    })
+  : null;
+
+const paymentClient = client ? new Payment(client) : null;
+
+// Status do backend
+app.get('/api/status', (req, res) => {
+  res.json({
+    status: 'online',
+    mercado_pago_configurado: mpConfigured,
+    ambiente: 'backend'
+  });
+});
+
+// Criar pagamento Pix
+app.post('/api/pagamento/pix', async (req, res) => {
+  try {
+    if (!mpConfigured || !client) {
+      return res.status(500).json({
+        erro: 'Mercado Pago não está configurado no backend.'
+      });
+    }
+
+    const {
+      valor,
+      descricao,
+      email,
+      modo_teste
+    } = req.body;
+
+    if (modo_teste !== true) {
+      return res.status(400).json({
+        erro: 'O endpoint está protegido. Envie modo_teste: true durante os testes.'
+      });
+    }
+
+    if (!valor || !descricao || !email) {
+      return res.status(400).json({
+        erro: 'Informe valor, descrição e e-mail.'
+      });
+    }
+
+    const valorNumerico = Number(valor);
+
+    if (!Number.isFinite(valorNumerico) || valorNumerico <= 0) {
+      return res.status(400).json({
+        erro: 'O valor do pagamento é inválido.'
+      });
+    }
+
+    const idempotencyKey = crypto.randomUUID();
+
+    const response = await fetch(
+      'https://api.mercadopago.com/v1/orders',
+      {
+        method: 'POST',
+
+        headers: {
+          'Authorization':
+            `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
+
+          'Content-Type': 'application/json',
+
+          'X-Idempotency-Key':
+            idempotencyKey
+        },
+
+        body: JSON.stringify({
+          type: 'online',
+
+          total_amount:
+            valorNumerico.toFixed(2),
+
+          external_reference:
+            `pedido-${Date.now()}`,
+
+          processing_mode:
+            'automatic',
+
+          transactions: {
+            payments: [
+              {
+                amount:
+                  valorNumerico.toFixed(2),
+
+                payment_method: {
+                  id: 'pix',
+                  type: 'bank_transfer'
+                },
+
+                payer: {
+                  email: String(email)
+                }
+              }
+            ]
+          }
+        })
+      }
+    );
+
+    const dados = await response.json();
+
+    if (!response.ok) {
+      console.error(
+        'Mercado Pago:',
+        JSON.stringify(dados, null, 2)
+      );
+
+      return res.status(response.status).json({
+        sucesso: false,
+        erro: 'Mercado Pago recusou a criação do Pix.',
+        detalhe:
+          dados?.message ||
+          dados?.error ||
+          'Erro retornado pela API.'
+      });
+    }
+
+    const pagamento =
+      dados?.transactions?.payments?.[0];
+
+    const paymentMethod =
+      pagamento?.payment_method;
+
+    res.json({
+      sucesso: true,
+
+      pedido_id:
+        dados.id || null,
+
+      pagamento_id:
+        pagamento?.id || null,
+
+      status:
+        pagamento?.status || null,
+
+      qr_code:
+        paymentMethod?.qr_code || null,
+
+      qr_code_base64:
+        paymentMethod?.qr_code_base64 || null,
+
+      ticket_url:
+        paymentMethod?.ticket_url || null
+    });
+
+  } catch (erro) {
+
+    console.error(
+      'Erro ao criar Pix:',
+      erro
+    );
+
+    res.status(500).json({
+      sucesso: false,
+      erro: 'Não foi possível criar o pagamento Pix.',
+      detalhe:
+        erro?.message ||
+        'Erro desconhecido'
+    });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
+});

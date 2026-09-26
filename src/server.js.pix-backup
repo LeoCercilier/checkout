@@ -1,0 +1,106 @@
+require('dotenv').config({ path: __dirname + '/.env' });
+
+const express = require('express');
+const crypto = require('crypto');
+const { MercadoPagoConfig, Payment } = require('mercadopago');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.static('public'));
+
+const mpConfigured = !!process.env.MERCADOPAGO_ACCESS_TOKEN;
+
+const client = mpConfigured
+  ? new MercadoPagoConfig({
+      accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN
+    })
+  : null;
+
+const paymentClient = client ? new Payment(client) : null;
+
+// Status do backend
+app.get('/api/status', (req, res) => {
+  res.json({
+    status: 'online',
+    mercado_pago_configurado: mpConfigured,
+    ambiente: 'backend'
+  });
+});
+
+// Criar pagamento Pix
+app.post('/api/pagamento/pix', async (req, res) => {
+  try {
+    if (!mpConfigured || !paymentClient) {
+      return res.status(500).json({
+        erro: 'Mercado Pago não está configurado no backend.'
+      });
+    }
+
+    const {
+      valor,
+      descricao,
+      email
+    } = req.body;
+
+    if (!valor || !descricao || !email) {
+      return res.status(400).json({
+        erro: 'Informe valor, descrição e e-mail.'
+      });
+    }
+
+    const valorNumerico = Number(valor);
+
+    if (!Number.isFinite(valorNumerico) || valorNumerico <= 0) {
+      return res.status(400).json({
+        erro: 'O valor do pagamento é inválido.'
+      });
+    }
+
+    const idempotencyKey = crypto.randomUUID();
+
+    const pagamento = await paymentClient.create({
+      body: {
+        transaction_amount: valorNumerico,
+        description: String(descricao),
+        payment_method_id: 'pix',
+        payer: {
+          email: String(email)
+        }
+      },
+      requestOptions: {
+        idempotencyKey
+      }
+    });
+
+    const pointOfInteraction =
+      pagamento.point_of_interaction || {};
+
+    const transactionData =
+      pointOfInteraction.transaction_data || {};
+
+    res.json({
+      sucesso: true,
+      pagamento_id: pagamento.id,
+      status: pagamento.status,
+      status_detalhe: pagamento.status_detail,
+      qr_code: transactionData.qr_code || null,
+      qr_code_base64: transactionData.qr_code_base64 || null,
+      ticket_url: transactionData.ticket_url || null
+    });
+
+  } catch (erro) {
+    console.error('Erro ao criar Pix:', erro);
+
+    res.status(500).json({
+      sucesso: false,
+      erro: 'Não foi possível criar o pagamento Pix.',
+      detalhe: erro?.message || 'Erro desconhecido'
+    });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
+});
