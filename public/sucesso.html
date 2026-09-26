@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pagamento</title>
+  <title>Pagamento | Meu Checkout</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -43,6 +43,51 @@
     .erro {
       color: #b00020;
     }
+
+    #area-download {
+      display: none;
+      margin-top: 25px;
+    }
+
+    #area-download p {
+      color: #334155;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .botao-download {
+      display: inline-block;
+      width: 100%;
+      max-width: 320px;
+      padding: 16px 20px;
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .botao-download:hover {
+      opacity: 0.92;
+    }
+
+    .botao-download:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    #download-msg {
+      margin-top: 14px;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .download-erro {
+      color: #b00020;
+    }
   </style>
 </head>
 
@@ -55,14 +100,31 @@
     </div>
 
     <p id="detalhes"></p>
+
+    <div id="area-download">
+      <p>Seu pagamento foi confirmado.<br>Clique no botão abaixo para baixar o e-book.</p>
+      <button id="btn-download" class="botao-download">
+        Baixar meu e-book
+      </button>
+      <div id="download-msg"></div>
+    </div>
   </div>
 
   <script>
-    const API =
+    const API_CONSULTAR =
       "https://zrycyjntfifuucrnmcuq.supabase.co/functions/v1/consultar-pedido";
+
+    const API_DOWNLOAD =
+      "https://zrycyjntfifuucrnmcuq.supabase.co/functions/v1/gerar-download";
 
     const mensagem = document.getElementById("mensagem");
     const detalhes = document.getElementById("detalhes");
+    const areaDownload = document.getElementById("area-download");
+    const btnDownload = document.getElementById("btn-download");
+    const downloadMsg = document.getElementById("download-msg");
+
+    let pagamentoConfirmado = false;
+    let intervalId = null;
 
     async function verificarPagamento() {
       const externalReference =
@@ -75,7 +137,7 @@
       }
 
       try {
-        const resposta = await fetch(API, {
+        const resposta = await fetch(API_CONSULTAR, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -88,15 +150,20 @@
         const resultado = await resposta.json();
 
         if (resultado.confirmado) {
+          pagamentoConfirmado = true;
           mensagem.textContent = "Pagamento confirmado! ✅";
           mensagem.className = "confirmado";
+          detalhes.textContent = "Seu pagamento foi confirmado com sucesso.";
+          areaDownload.style.display = "block";
 
-          detalhes.textContent =
-            "Seu pagamento foi confirmado com sucesso.";
+          // Para o polling após confirmar
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+          }
         } else {
           mensagem.textContent = "Aguardando confirmação do pagamento...";
           mensagem.className = "aguardando";
-
           detalhes.textContent =
             "Esta página verificará novamente em alguns segundos.";
         }
@@ -107,9 +174,61 @@
       }
     }
 
-    verificarPagamento();
+    async function baixarEbook() {
+      const externalReference =
+        localStorage.getItem("checkout_external_reference");
 
-    setInterval(verificarPagamento, 5000);
+      if (!externalReference) {
+        downloadMsg.textContent = "Pedido não encontrado.";
+        downloadMsg.className = "download-erro";
+        return;
+      }
+
+      btnDownload.disabled = true;
+      btnDownload.textContent = "Gerando link seguro...";
+      downloadMsg.textContent = "";
+      downloadMsg.className = "";
+
+      try {
+        const resposta = await fetch(API_DOWNLOAD, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            external_reference: externalReference
+          })
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok || !dados.sucesso || !dados.url) {
+          throw new Error(
+            dados.erro || "Não foi possível gerar o link de download."
+          );
+        }
+
+        // Abre a Signed URL (temporária)
+        window.open(dados.url, "_blank");
+
+        downloadMsg.textContent =
+          "Link gerado com sucesso. O download deve iniciar em breve. O link expira em 1 hora.";
+        btnDownload.textContent = "Baixar novamente";
+      } catch (erro) {
+        console.error(erro);
+        downloadMsg.textContent = erro.message || "Erro ao gerar download.";
+        downloadMsg.className = "download-erro";
+        btnDownload.textContent = "Tentar novamente";
+      } finally {
+        btnDownload.disabled = false;
+      }
+    }
+
+    btnDownload.addEventListener("click", baixarEbook);
+
+    // Inicia verificação
+    verificarPagamento();
+    intervalId = setInterval(verificarPagamento, 5000);
   </script>
 </body>
 </html>
