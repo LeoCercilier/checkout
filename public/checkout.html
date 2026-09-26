@@ -262,6 +262,20 @@ async function criarPix() {
   mensagem.style.display = 'block';
   mensagem.textContent = 'Criando seu pagamento Pix...';
 
+  // Suporte a múltiplos produtos: ?produto=1 ou ?produto_id=1
+  // Se não informado, continua com o produto 1 (comportamento atual)
+  const params = new URLSearchParams(window.location.search);
+  const produtoIdParam = params.get('produto') || params.get('produto_id');
+  const produtoId = produtoIdParam ? Number(produtoIdParam) : 1;
+
+  if (!Number.isFinite(produtoId) || produtoId <= 0) {
+    mensagem.style.display = 'block';
+    mensagem.textContent = 'Produto inválido.';
+    botao.disabled = false;
+    botao.textContent = 'Pagar com Pix';
+    return;
+  }
+
   try {
 
     const resposta = await fetch('https://zrycyjntfifuucrnmcuq.supabase.co/functions/v1/criar-pagamento', {
@@ -272,7 +286,7 @@ async function criarPix() {
       },
 
       body: JSON.stringify({
-        produto_id: 1,
+        produto_id: produtoId,
         email: email
       })
     });
