@@ -125,6 +125,7 @@
       width: 100%;
       margin: 15px auto;
       border-radius: 10px;
+      border: 1px solid #e2e8f0;
     }
 
     .pix-box {
@@ -140,6 +141,10 @@
       min-height: 100px;
       resize: none;
       font-size: 13px;
+      margin-top: 8px;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
     }
 
     .botao-copiar {
@@ -147,10 +152,29 @@
       margin-top: 8px;
     }
 
+    .botao-continuar {
+      background: #111827;
+      margin-top: 16px;
+    }
+
     .seguro {
       text-align: center;
       color: #64748b;
       font-size: 13px;
+    }
+
+    .dica {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.45;
+    }
+
+    #statusPagamento {
+      margin-top: 14px;
+      font-size: 14px;
+      color: #b06b00;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -186,24 +210,30 @@
 
     <section class="card" id="resultado">
       <h2>Pix gerado!</h2>
-      <p>Escaneie o QR Code com o aplicativo do seu banco.</p>
+      <p>Escaneie o QR Code com o app do seu banco<br>ou use o Pix Copia e Cola abaixo.</p>
+
       <img id="qrcode" alt="QR Code Pix">
+
       <div class="pix-box">
         <strong>Pix Copia e Cola</strong>
         <textarea id="pixCopiaCola" readonly></textarea>
         <button class="botao-copiar" onclick="copiarPix()">Copiar código Pix</button>
       </div>
-      <p id="statusPagamento">Aguardando pagamento...</p>
+
+      <p id="statusPagamento">Aguardando você pagar no banco...</p>
+
+      <p class="dica">
+        Depois de pagar no app do banco, clique no botão abaixo para verificar o pagamento e baixar o material.
+      </p>
+
+      <button class="botao-continuar" onclick="irParaSucesso()">
+        Já paguei — verificar e baixar
+      </button>
     </section>
 
   </main>
 
 <script>
-/**
- * Catálogo de exibição (UI).
- * O preço cobrado e o PDF vêm do Supabase no momento do pagamento.
- * Aceita ?produto=1  ou  ?produto=energia-solar
- */
 const PRODUTOS = {
   1: {
     id: 1,
@@ -261,12 +291,9 @@ const FALLBACK = {
 function resolverProdutoId() {
   const params = new URLSearchParams(window.location.search);
   const raw = (params.get('produto') || params.get('produto_id') || '1').trim().toLowerCase();
-
   if (SLUG_PARA_ID[raw]) return SLUG_PARA_ID[raw];
-
   const num = Number(raw);
   if (Number.isFinite(num) && num > 0) return num;
-
   return 1;
 }
 
@@ -277,7 +304,6 @@ function getProduto() {
 
 function renderProduto() {
   const p = getProduto();
-
   document.getElementById('topoTitulo').textContent = p.topo;
   document.getElementById('topoSub').textContent = p.sub;
   document.getElementById('produtoNome').textContent = p.nome;
@@ -293,12 +319,15 @@ function renderProduto() {
     ul.appendChild(li);
   });
 
-  // Guarda para a página de sucesso
   localStorage.setItem('checkout_produto_id', String(p.id));
   localStorage.setItem('checkout_produto_nome', p.nome);
 }
 
 renderProduto();
+
+function irParaSucesso() {
+  window.location.href = 'sucesso.html';
+}
 
 async function criarPix() {
   const email = document.getElementById('email').value.trim();
@@ -357,16 +386,18 @@ async function criarPix() {
     }
 
     pix.value = dados.qr_code || '';
+
+    // Esconde o formulário de e-mail; mantém QR na tela
+    document.getElementById('checkoutCard').style.display = 'none';
     resultado.style.display = 'block';
     mensagem.style.display = 'none';
+
     document.getElementById('statusPagamento').textContent =
-      'Pagamento Pix criado. Aguardando confirmação.';
+      'Pix pronto. Pague no app do banco e depois clique em "Já paguei".';
 
     resultado.scrollIntoView({ behavior: 'smooth' });
 
-    setTimeout(function () {
-      window.location.href = 'sucesso.html';
-    }, 3000);
+    // SEM redirecionamento automático — o usuário decide quando seguir
 
   } catch (erro) {
     console.error(erro);
