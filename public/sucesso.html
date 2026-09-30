@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pagamento | Energia Solar Fotovoltaica</title>
+  <title>Pagamento | Cursos Técnicos Práticos</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -72,9 +72,7 @@
       text-decoration: none;
     }
 
-    .botao-download:hover {
-      opacity: 0.92;
-    }
+    .botao-download:hover { opacity: 0.92; }
 
     .botao-download:disabled {
       opacity: 0.6;
@@ -87,15 +85,13 @@
       color: #64748b;
     }
 
-    .download-erro {
-      color: #b00020;
-    }
+    .download-erro { color: #b00020; }
   </style>
 </head>
 
 <body>
   <div class="card">
-    <h1>Energia Solar Fotovoltaica — Guia Prático Essencial</h1>
+    <h1 id="tituloProduto">Seu curso digital</h1>
 
     <div id="mensagem" class="aguardando">
       Verificando pagamento...
@@ -104,9 +100,9 @@
     <p id="detalhes"></p>
 
     <div id="area-download">
-      <p>Seu pagamento foi confirmado.<br>Clique no botão abaixo para baixar o e-book.</p>
+      <p>Seu pagamento foi confirmado.<br>Clique no botão abaixo para baixar o material.</p>
       <button id="btn-download" class="botao-download">
-        Baixar meu e-book
+        Baixar meu material
       </button>
       <div id="download-msg"></div>
     </div>
@@ -119,13 +115,27 @@
     const API_DOWNLOAD =
       "https://zrycyjntfifuucrnmcuq.supabase.co/functions/v1/gerar-download";
 
+    const NOMES = {
+      1: 'Energia Solar Fotovoltaica — Guia Prático Essencial',
+      2: 'Instalação e Manutenção de Ar-Condicionado Split'
+    };
+
     const mensagem = document.getElementById("mensagem");
     const detalhes = document.getElementById("detalhes");
     const areaDownload = document.getElementById("area-download");
     const btnDownload = document.getElementById("btn-download");
     const downloadMsg = document.getElementById("download-msg");
+    const tituloProduto = document.getElementById("tituloProduto");
 
-    let pagamentoConfirmado = false;
+    // Título dinâmico conforme o produto do checkout
+    (function aplicarTitulo() {
+      const nomeSalvo = localStorage.getItem("checkout_produto_nome");
+      const idSalvo = localStorage.getItem("checkout_produto_id");
+      const nome = nomeSalvo || NOMES[idSalvo] || "Seu curso digital";
+      tituloProduto.textContent = nome;
+      document.title = "Pagamento | " + nome;
+    })();
+
     let intervalId = null;
 
     async function verificarPagamento() {
@@ -141,24 +151,18 @@
       try {
         const resposta = await fetch(API_CONSULTAR, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            external_reference: externalReference
-          })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ external_reference: externalReference })
         });
 
         const resultado = await resposta.json();
 
         if (resultado.confirmado) {
-          pagamentoConfirmado = true;
           mensagem.textContent = "Pagamento confirmado! ✅";
           mensagem.className = "confirmado";
           detalhes.textContent = "Seu pagamento foi confirmado com sucesso.";
           areaDownload.style.display = "block";
 
-          // Para o polling após confirmar
           if (intervalId) {
             clearInterval(intervalId);
             intervalId = null;
@@ -194,12 +198,8 @@
       try {
         const resposta = await fetch(API_DOWNLOAD, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            external_reference: externalReference
-          })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ external_reference: externalReference })
         });
 
         const dados = await resposta.json();
@@ -210,7 +210,12 @@
           );
         }
 
-        // Abre a Signed URL (temporária)
+        // Se a API devolver o nome do produto, atualiza o título
+        if (dados.produto_nome) {
+          tituloProduto.textContent = dados.produto_nome;
+          document.title = "Pagamento | " + dados.produto_nome;
+        }
+
         window.open(dados.url, "_blank");
 
         downloadMsg.textContent =
@@ -228,7 +233,6 @@
 
     btnDownload.addEventListener("click", baixarEbook);
 
-    // Inicia verificação
     verificarPagamento();
     intervalId = setInterval(verificarPagamento, 5000);
   </script>

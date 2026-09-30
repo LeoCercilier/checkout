@@ -6,9 +6,7 @@
   <title>Checkout | Cursos Técnicos Práticos</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -24,9 +22,7 @@
       text-align: center;
     }
 
-    .topo strong {
-      font-size: 20px;
-    }
+    .topo strong { font-size: 20px; }
 
     .topo small {
       display: block;
@@ -170,13 +166,9 @@
 
     <section class="card">
       <div class="oferta">Oferta especial</div>
-
       <h1 id="produtoNome">Carregando produto...</h1>
-
       <p class="descricao" id="produtoDescricao"></p>
-
       <div class="preco" id="produtoPreco">R$ 19,90</div>
-
       <ul class="beneficios" id="produtoBeneficios">
         <li>PDF digital completo</li>
         <li>Pagamento rápido por Pix</li>
@@ -185,66 +177,37 @@
     </section>
 
     <section class="card" id="checkoutCard">
-
       <label for="email">Seu melhor e-mail</label>
-
-      <input
-        id="email"
-        type="email"
-        placeholder="voce@email.com"
-        autocomplete="email"
-      >
-
-      <button id="btnPagar" onclick="criarPix()">
-        Pagar com Pix
-      </button>
-
+      <input id="email" type="email" placeholder="voce@email.com" autocomplete="email">
+      <button id="btnPagar" onclick="criarPix()">Pagar com Pix</button>
       <div id="mensagem" class="mensagem"></div>
-
-      <div class="seguro">
-        Pagamento processado com segurança pelo Mercado Pago.
-      </div>
-
+      <div class="seguro">Pagamento processado com segurança pelo Mercado Pago.</div>
     </section>
 
     <section class="card" id="resultado">
-
       <h2>Pix gerado!</h2>
-
-      <p>
-        Escaneie o QR Code com o aplicativo do seu banco.
-      </p>
-
+      <p>Escaneie o QR Code com o aplicativo do seu banco.</p>
       <img id="qrcode" alt="QR Code Pix">
-
       <div class="pix-box">
         <strong>Pix Copia e Cola</strong>
-
-        <textarea
-          id="pixCopiaCola"
-          readonly
-        ></textarea>
-
-        <button
-          class="botao-copiar"
-          onclick="copiarPix()"
-        >
-          Copiar código Pix
-        </button>
+        <textarea id="pixCopiaCola" readonly></textarea>
+        <button class="botao-copiar" onclick="copiarPix()">Copiar código Pix</button>
       </div>
-
-      <p id="statusPagamento">
-        Aguardando pagamento...
-      </p>
-
+      <p id="statusPagamento">Aguardando pagamento...</p>
     </section>
 
   </main>
 
 <script>
-/* Catálogo de exibição — o preço real e o PDF vêm do Supabase no pagamento */
+/**
+ * Catálogo de exibição (UI).
+ * O preço cobrado e o PDF vêm do Supabase no momento do pagamento.
+ * Aceita ?produto=1  ou  ?produto=energia-solar
+ */
 const PRODUTOS = {
   1: {
+    id: 1,
+    slug: 'energia-solar',
     nome: 'Energia Solar Fotovoltaica — Guia Prático Essencial',
     topo: 'Energia Solar Fotovoltaica',
     sub: 'Guia Prático Essencial · Checkout seguro',
@@ -257,6 +220,8 @@ const PRODUTOS = {
     ]
   },
   2: {
+    id: 2,
+    slug: 'ar-condicionado-split',
     nome: 'Instalação e Manutenção de Ar-Condicionado Split',
     topo: 'Ar-Condicionado Split',
     sub: 'Guia Prático do Zero à Manutenção · Checkout seguro',
@@ -270,7 +235,17 @@ const PRODUTOS = {
   }
 };
 
+const SLUG_PARA_ID = {
+  'energia-solar': 1,
+  'solar': 1,
+  'ar-condicionado-split': 2,
+  'ar-condicionado': 2,
+  'split': 2
+};
+
 const FALLBACK = {
+  id: 1,
+  slug: 'curso',
   nome: 'Curso digital',
   topo: 'Checkout',
   sub: 'Checkout seguro · Pagamento via Pix',
@@ -283,16 +258,25 @@ const FALLBACK = {
   ]
 };
 
-function getProdutoId() {
+function resolverProdutoId() {
   const params = new URLSearchParams(window.location.search);
-  const raw = params.get('produto') || params.get('produto_id');
-  const id = raw ? Number(raw) : 1;
-  return (Number.isFinite(id) && id > 0) ? id : 1;
+  const raw = (params.get('produto') || params.get('produto_id') || '1').trim().toLowerCase();
+
+  if (SLUG_PARA_ID[raw]) return SLUG_PARA_ID[raw];
+
+  const num = Number(raw);
+  if (Number.isFinite(num) && num > 0) return num;
+
+  return 1;
+}
+
+function getProduto() {
+  const id = resolverProdutoId();
+  return PRODUTOS[id] || Object.assign({}, FALLBACK, { id: id });
 }
 
 function renderProduto() {
-  const id = getProdutoId();
-  const p = PRODUTOS[id] || FALLBACK;
+  const p = getProduto();
 
   document.getElementById('topoTitulo').textContent = p.topo;
   document.getElementById('topoSub').textContent = p.sub;
@@ -308,15 +292,19 @@ function renderProduto() {
     li.textContent = item;
     ul.appendChild(li);
   });
+
+  // Guarda para a página de sucesso
+  localStorage.setItem('checkout_produto_id', String(p.id));
+  localStorage.setItem('checkout_produto_nome', p.nome);
 }
 
 renderProduto();
 
 async function criarPix() {
-
   const email = document.getElementById('email').value.trim();
   const botao = document.getElementById('btnPagar');
   const mensagem = document.getElementById('mensagem');
+  const produto = getProduto();
 
   if (!email || !email.includes('@')) {
     mensagem.style.display = 'block';
@@ -326,23 +314,15 @@ async function criarPix() {
 
   botao.disabled = true;
   botao.textContent = 'Gerando Pix...';
-
   mensagem.style.display = 'block';
   mensagem.textContent = 'Criando seu pagamento Pix...';
 
-  const produtoId = getProdutoId();
-
   try {
-
     const resposta = await fetch('https://zrycyjntfifuucrnmcuq.supabase.co/functions/v1/criar-pagamento', {
       method: 'POST',
-
-      headers: {
-        'Content-Type': 'application/json'
-      },
-
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        produto_id: produtoId,
+        produto_id: produto.id,
         email: email
       })
     });
@@ -350,24 +330,17 @@ async function criarPix() {
     const dados = await resposta.json();
 
     if (!resposta.ok || !dados.sucesso) {
-      throw new Error(
-        dados.detalhe ||
-        dados.erro ||
-        'Não foi possível criar o Pix.'
-      );
+      throw new Error(dados.detalhe || dados.erro || 'Não foi possível criar o Pix.');
     }
 
     if (dados.external_reference) {
-      localStorage.setItem(
-        'checkout_external_reference',
-        dados.external_reference
-      );
+      localStorage.setItem('checkout_external_reference', dados.external_reference);
     }
+    localStorage.setItem('checkout_produto_id', String(produto.id));
+    localStorage.setItem('checkout_produto_nome', produto.nome);
 
     if (!dados.qr_code_base64 && !dados.qr_code) {
-      throw new Error(
-        'O Mercado Pago criou o pagamento, mas não retornou o QR Code.'
-      );
+      throw new Error('O Mercado Pago criou o pagamento, mas não retornou o QR Code.');
     }
 
     const resultado = document.getElementById('resultado');
@@ -375,75 +348,49 @@ async function criarPix() {
     const pix = document.getElementById('pixCopiaCola');
 
     if (dados.qr_code_base64) {
-
-      qrCode.src =
-        dados.qr_code_base64.startsWith('data:')
-          ? dados.qr_code_base64
-          : `data:image/png;base64,${dados.qr_code_base64}`;
-
+      qrCode.src = dados.qr_code_base64.startsWith('data:')
+        ? dados.qr_code_base64
+        : 'data:image/png;base64,' + dados.qr_code_base64;
       qrCode.style.display = 'block';
-
     } else {
-
       qrCode.style.display = 'none';
-
     }
 
     pix.value = dados.qr_code || '';
-
     resultado.style.display = 'block';
-
     mensagem.style.display = 'none';
-
     document.getElementById('statusPagamento').textContent =
       'Pagamento Pix criado. Aguardando confirmação.';
 
-    resultado.scrollIntoView({
-      behavior: 'smooth'
-    });
+    resultado.scrollIntoView({ behavior: 'smooth' });
 
-    setTimeout(() => {
+    setTimeout(function () {
       window.location.href = 'sucesso.html';
     }, 3000);
 
   } catch (erro) {
-
     console.error(erro);
-
     mensagem.style.display = 'block';
     mensagem.textContent = erro.message;
-
     botao.disabled = false;
     botao.textContent = 'Pagar com Pix';
   }
 }
 
-
 async function copiarPix() {
-
   const campo = document.getElementById('pixCopiaCola');
-
-  if (!campo.value) {
-    return;
-  }
+  if (!campo.value) return;
 
   try {
-
     await navigator.clipboard.writeText(campo.value);
-
     const botao = document.querySelector('.botao-copiar');
-
     botao.textContent = 'Código copiado!';
-
-    setTimeout(() => {
+    setTimeout(function () {
       botao.textContent = 'Copiar código Pix';
     }, 2000);
-
   } catch (erro) {
-
     campo.select();
     document.execCommand('copy');
-
   }
 }
 </script>
