@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout | Energia Solar Fotovoltaica — Guia Prático Essencial</title>
+  <title>Checkout | Cursos Técnicos Práticos</title>
 
   <style>
     * {
@@ -162,8 +162,8 @@
 <body>
 
   <header class="topo">
-    <strong>Energia Solar Fotovoltaica</strong>
-    <small>Guia Prático Essencial · Checkout seguro</small>
+    <strong id="topoTitulo">Checkout</strong>
+    <small id="topoSub">Checkout seguro · Pagamento via Pix</small>
   </header>
 
   <main class="container">
@@ -171,16 +171,14 @@
     <section class="card">
       <div class="oferta">Oferta especial</div>
 
-      <h1>Energia Solar Fotovoltaica — Guia Prático Essencial</h1>
+      <h1 id="produtoNome">Carregando produto...</h1>
 
-      <p class="descricao">
-        PDF digital completo. Do atendimento ao cliente até a conexão, comissionamento e manutenção. Contexto Brasil 2026.
-      </p>
+      <p class="descricao" id="produtoDescricao"></p>
 
-      <div class="preco">R$ 19,90</div>
+      <div class="preco" id="produtoPreco">R$ 19,90</div>
 
-      <ul class="beneficios">
-        <li>PDF digital — Guia Prático Essencial</li>
+      <ul class="beneficios" id="produtoBeneficios">
+        <li>PDF digital completo</li>
         <li>Pagamento rápido por Pix</li>
         <li>Download liberado após confirmação</li>
       </ul>
@@ -244,6 +242,76 @@
   </main>
 
 <script>
+/* Catálogo de exibição — o preço real e o PDF vêm do Supabase no pagamento */
+const PRODUTOS = {
+  1: {
+    nome: 'Energia Solar Fotovoltaica — Guia Prático Essencial',
+    topo: 'Energia Solar Fotovoltaica',
+    sub: 'Guia Prático Essencial · Checkout seguro',
+    descricao: 'PDF digital completo. Do atendimento ao cliente até a conexão, comissionamento e manutenção. Contexto Brasil 2026.',
+    precoLabel: 'R$ 19,90',
+    beneficios: [
+      'PDF digital — Guia Prático Essencial',
+      'Pagamento rápido por Pix',
+      'Download liberado após confirmação'
+    ]
+  },
+  2: {
+    nome: 'Instalação e Manutenção de Ar-Condicionado Split',
+    topo: 'Ar-Condicionado Split',
+    sub: 'Guia Prático do Zero à Manutenção · Checkout seguro',
+    descricao: 'PDF digital completo. Fundamentos, instalação, manutenção preventiva e diagnóstico de sistemas Split. Curso para iniciantes.',
+    precoLabel: 'R$ 19,90',
+    beneficios: [
+      'PDF digital — Guia do Zero à Manutenção',
+      'Pagamento rápido por Pix',
+      'Download liberado após confirmação'
+    ]
+  }
+};
+
+const FALLBACK = {
+  nome: 'Curso digital',
+  topo: 'Checkout',
+  sub: 'Checkout seguro · Pagamento via Pix',
+  descricao: 'Material digital. Acesso liberado após confirmação do pagamento.',
+  precoLabel: 'R$ 19,90',
+  beneficios: [
+    'PDF digital completo',
+    'Pagamento rápido por Pix',
+    'Download liberado após confirmação'
+  ]
+};
+
+function getProdutoId() {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get('produto') || params.get('produto_id');
+  const id = raw ? Number(raw) : 1;
+  return (Number.isFinite(id) && id > 0) ? id : 1;
+}
+
+function renderProduto() {
+  const id = getProdutoId();
+  const p = PRODUTOS[id] || FALLBACK;
+
+  document.getElementById('topoTitulo').textContent = p.topo;
+  document.getElementById('topoSub').textContent = p.sub;
+  document.getElementById('produtoNome').textContent = p.nome;
+  document.getElementById('produtoDescricao').textContent = p.descricao;
+  document.getElementById('produtoPreco').textContent = p.precoLabel;
+  document.title = 'Checkout | ' + p.nome;
+
+  const ul = document.getElementById('produtoBeneficios');
+  ul.innerHTML = '';
+  p.beneficios.forEach(function (item) {
+    const li = document.createElement('li');
+    li.textContent = item;
+    ul.appendChild(li);
+  });
+}
+
+renderProduto();
+
 async function criarPix() {
 
   const email = document.getElementById('email').value.trim();
@@ -262,19 +330,7 @@ async function criarPix() {
   mensagem.style.display = 'block';
   mensagem.textContent = 'Criando seu pagamento Pix...';
 
-  // Suporte a múltiplos produtos: ?produto=1 ou ?produto_id=1
-  // Se não informado, continua com o produto 1 (comportamento atual)
-  const params = new URLSearchParams(window.location.search);
-  const produtoIdParam = params.get('produto') || params.get('produto_id');
-  const produtoId = produtoIdParam ? Number(produtoIdParam) : 1;
-
-  if (!Number.isFinite(produtoId) || produtoId <= 0) {
-    mensagem.style.display = 'block';
-    mensagem.textContent = 'Produto inválido.';
-    botao.disabled = false;
-    botao.textContent = 'Pagar com Pix';
-    return;
-  }
+  const produtoId = getProdutoId();
 
   try {
 
@@ -346,11 +402,11 @@ async function criarPix() {
       behavior: 'smooth'
     });
 
-      setTimeout(() => {
+    setTimeout(() => {
       window.location.href = 'sucesso.html';
     }, 3000);
 
-    } catch (erro) {
+  } catch (erro) {
 
     console.error(erro);
 
