@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus cursos | Meu Checkout</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #f5f7fb;
+      color: #0f172a;
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; }
+    .brand {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    h1 {
+      font-size: 1.45rem;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .sub {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.95rem;
+      margin-bottom: 22px;
+    }
+    .status {
+      text-align: center;
+      padding: 20px;
+      color: #64748b;
+      font-size: 15px;
+    }
+    .status.erro { color: #b91c1c; }
+    .curso {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px 18px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    }
+    .curso h2 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+    .curso button {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      background: #16a34a;
+      color: #fff;
+    }
+    .curso button:disabled { opacity: .6; cursor: wait; }
+    .hint {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+    .hint.erro { color: #b91c1c; }
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 14px;
+      color: #64748b;
+    }
+    .footer a { color: #16a34a; font-weight: 700; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">Meu Checkout</div>
+    <h1>Meus cursos</h1>
+    <p class="sub" id="sub">Validando seu acesso...</p>
+
+    <div id="status" class="status">Aguarde...</div>
+    <div id="lista"></div>
+
+    <div class="footer">
+      <a href="./acesso.html">Solicitar novo link</a>
+      &nbsp;·&nbsp;
+      <a href="./">Ver cursos</a>
+    </div>
+  </div>
+
+  <script>
+    const API_VALIDAR =
+      "https://zrycyjntfifuucrnmcuq.supabase.co/functions/v1/validar-acesso";
+    const API_DOWNLOAD =
+      "https://zrycyjntfifuucrnmcuq.supabase.co/functions/v1/gerar-download";
+
+    const statusEl = document.getElementById("status");
+    const listaEl = document.getElementById("lista");
+    const subEl = document.getElementById("sub");
+
+    const params = new URLSearchParams(window.location.search);
+    const token = (params.get("token") || "").trim();
+
+    async function validar() {
+      if (!token) {
+        statusEl.className = "status erro";
+        statusEl.textContent =
+          "Link incompleto. Solicite um novo acesso com o e-mail da compra.";
+        subEl.textContent = "Acesso nao autorizado";
+        return;
+      }
+
+      try {
+        const resp = await fetch(API_VALIDAR, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+        const data = await resp.json();
+
+        if (!resp.ok || !data.sucesso) {
+          throw new Error(data.erro || "Nao foi possivel validar o link.");
+        }
+
+        // Remove token da URL (evita reuso acidental ao compartilhar)
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState({}, "", "./meus-cursos.html");
+        }
+
+        const cursos = data.cursos || [];
+        if (!cursos.length) {
+          statusEl.className = "status";
+          statusEl.textContent =
+            data.mensagem || "Nenhum curso liberado para este e-mail.";
+          subEl.textContent = data.email || "";
+          return;
+        }
+
+        statusEl.style.display = "none";
+        subEl.textContent = data.email
+          ? "Cursos liberados para " + data.email
+          : "Cursos liberados";
+
+        listaEl.innerHTML = "";
+        cursos.forEach(function (curso) {
+          const card = document.createElement("div");
+          card.className = "curso";
+
+          const h2 = document.createElement("h2");
+          h2.textContent = curso.nome || "Curso";
+
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = "Acessar curso / baixar PDF";
+
+          const hint = document.createElement("div");
+          hint.className = "hint";
+
+          btn.addEventListener("click", function () {
+            baixar(curso.external_reference, btn, hint);
+          });
+
+          card.appendChild(h2);
+          card.appendChild(btn);
+          card.appendChild(hint);
+          listaEl.appendChild(card);
+        });
+      } catch (e) {
+        statusEl.className = "status erro";
+        statusEl.textContent = e.message || "Falha na validacao.";
+        subEl.textContent = "Tente solicitar um novo link";
+      }
+    }
+
+    async function baixar(externalReference, btn, hint) {
+      if (!externalReference) {
+        hint.className = "hint erro";
+        hint.textContent = "Referencia do pedido ausente.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Gerando link seguro...";
+      hint.className = "hint";
+      hint.textContent = "";
+
+      try {
+        const resp = await fetch(API_DOWNLOAD, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ external_reference: externalReference }),
+        });
+        const data = await resp.json();
+
+        if (!resp.ok || !data.sucesso || !data.url) {
+          throw new Error(data.erro || "Nao foi possivel gerar o download.");
+        }
+
+        window.open(data.url, "_blank");
+        hint.textContent =
+          "Download liberado. O link expira em 1 hora. Voce pode gerar outro quando precisar.";
+        btn.textContent = "Baixar novamente";
+      } catch (e) {
+        hint.className = "hint erro";
+        hint.textContent = e.message || "Erro ao baixar.";
+        btn.textContent = "Tentar novamente";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    validar();
+  </script>
+</body>
+</html>
