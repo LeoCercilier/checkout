@@ -3,117 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Energia Solar Fotovoltaica — Guia Prático Essencial | Brasil 2026</title>
-  <meta name="description" content="Guia prático de energia solar fotovoltaica: do atendimento ao cliente até conexão, comissionamento e manutenção. Conteúdo para o contexto brasileiro.">
+  <title>Energia Solar Fotovoltaica — Guia Prático Essencial | Brasil</title>
+  <meta name="description" content="Curso progressivo para iniciantes: fundamentos, projeto, instalação, homologação, manutenção e diagnóstico de sistemas fotovoltaicos. Diagramas, checklists e exercícios. PDF digital · R$ 19,90 · Pix.">
+  <link rel="canonical" href="https://leocercilier.github.io/checkout/">
 
-  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://leocercilier.github.io/checkout/">
-  <meta property="og:title" content="Energia Solar Fotovoltaica — Guia Prático Essencial (Brasil 2026)">
-  <meta property="og:description" content="Do primeiro contato com o cliente até a conexão, comissionamento e manutenção. PDF digital · R$ 19,90 · Pagamento via Pix.">
+  <meta property="og:title" content="Energia Solar Fotovoltaica — Guia Prático Essencial">
+  <meta property="og:description" content="Fundamentos, projeto, instalação, homologação, manutenção e diagnóstico. PDF digital · R$ 19,90 · Pagamento via Pix.">
   <meta property="og:image" content="https://leocercilier.github.io/checkout/og-cover.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="pt_BR">
 
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Energia Solar Fotovoltaica — Guia Prático Essencial (Brasil 2026)">
-  <meta name="twitter:description" content="Do primeiro contato com o cliente até a conexão, comissionamento e manutenção. PDF digital · R$ 19,90.">
+  <meta name="twitter:title" content="Energia Solar Fotovoltaica — Guia Prático Essencial">
+  <meta name="twitter:description" content="Curso progressivo para iniciantes. PDF digital · R$ 19,90.">
   <meta name="twitter:image" content="https://leocercilier.github.io/checkout/og-cover.png">
 
   <style>
     :root {
       --bg: #0f172a;
       --bg-soft: #1e293b;
-      --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
       --accent: #16a34a;
       --accent-dark: #15803d;
       --line: #e2e8f0;
+      --white: #fff;
       --hero-grad: linear-gradient(160deg, #0f172a 0%, #1e3a5f 55%, #0f766e 100%);
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background: #f8fafc;
       color: var(--text);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: 720px; margin: 0 auto; padding: 0 20px; }
 
-    a {
-      text-decoration: none;
-      color: inherit;
+    .nav {
+      background: rgba(15, 23, 42, 0.97);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(8px);
     }
-
-    .container {
-      width: 100%;
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 0 20px;
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      gap: 12px;
     }
+    .nav-logo { color: #fff; font-weight: 700; font-size: 0.95rem; }
+    .nav-logo span { color: #4ade80; }
+    .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .nav-links a.secondary {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    .nav-cta:hover { background: var(--accent-dark); }
 
     .hero {
       background: var(--hero-grad);
       color: #fff;
-      padding: 48px 0 56px;
+      padding: 52px 0 60px;
     }
-
     .badge {
       display: inline-block;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
       color: #e2e8f0;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       padding: 6px 12px;
       border-radius: 999px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
-
     .hero h1 {
-      font-size: clamp(1.55rem, 5vw, 2.1rem);
-      line-height: 1.25;
+      font-size: clamp(1.55rem, 5vw, 2.15rem);
       font-weight: 800;
-      margin-bottom: 14px;
+      line-height: 1.22;
+      margin-bottom: 12px;
     }
-
-    .hero .subtitle {
+    .hero-sub {
       font-size: 1.05rem;
       color: #cbd5e1;
-      max-width: 34em;
-      margin-bottom: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
     }
-
-    .price-box {
+    .hero-desc {
+      font-size: 0.98rem;
+      color: #94a3b8;
+      margin-bottom: 26px;
+      max-width: 36em;
+    }
+    .price-row {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
-      gap: 12px 20px;
-      margin-bottom: 24px;
+      align-items: baseline;
+      gap: 10px 16px;
+      margin-bottom: 20px;
     }
-
-    .price {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .price-note {
-      font-size: 0.9rem;
-      color: #94a3b8;
-    }
-
+    .price { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em; }
+    .price-note { font-size: 0.9rem; color: #94a3b8; }
     .btn {
       display: inline-flex;
       align-items: center;
@@ -122,73 +130,138 @@
       color: #fff;
       font-weight: 800;
       font-size: 1rem;
-      padding: 14px 24px;
+      padding: 15px 28px;
       border-radius: 10px;
       border: 0;
       cursor: pointer;
     }
-
     .btn:hover { background: var(--accent-dark); }
-    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-block { width: 100%; max-width: 360px; }
+    .hero-note { margin-top: 14px; font-size: 0.85rem; color: #94a3b8; }
 
-    section { padding: 40px 0; }
-    h2 { font-size: 1.35rem; font-weight: 800; margin-bottom: 12px; }
-    .lead { color: var(--muted); margin-bottom: 16px; }
+    section { padding: 44px 0; }
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--bg);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .lead { color: var(--muted); margin-bottom: 18px; }
 
     .list { list-style: none; display: grid; gap: 10px; }
     .list li {
-      background: #fff;
+      background: var(--white);
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 14px 16px;
+      font-size: 0.95rem;
       display: flex;
       gap: 10px;
+      align-items: flex-start;
     }
-    .list li::before { content: "✓"; color: var(--accent); font-weight: 800; }
+    .list li::before {
+      content: "✓";
+      color: var(--accent);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
 
-    .cards { display: grid; gap: 12px; margin-top: 12px; }
-    .card {
-      background: #fff;
+    .mods { display: grid; gap: 8px; margin-top: 8px; }
+    .mod {
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+      background: var(--white);
       border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.92rem;
     }
-    .card h3 { font-size: 1rem; margin-bottom: 6px; }
-    .card p { color: var(--muted); font-size: 0.95rem; }
+    .mod strong { color: var(--accent-dark); min-width: 1.6em; }
 
-    .highlight {
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .pill {
       background: #ecfdf5;
-      border: 1px solid #bbf7d0;
-      border-radius: 12px;
-      padding: 16px;
+      color: var(--accent-dark);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
     }
 
-    .disclaimer {
+    .card-soft {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-top: 12px;
+    }
+    .card-soft h3 { font-size: 1rem; margin-bottom: 8px; color: var(--bg); }
+    .card-soft p, .card-soft li { font-size: 0.92rem; color: var(--muted); }
+    .card-soft ul { margin-left: 1.1em; margin-top: 6px; }
+
+    .warning-box {
       background: #fef2f2;
       border-left: 4px solid #dc2626;
       border-radius: 0 12px 12px 0;
-      padding: 16px;
-      font-size: 0.92rem;
-      color: #7f1d1d;
+      padding: 20px 18px;
     }
+    .warning-box h3 { color: #dc2626; font-size: 0.95rem; margin-bottom: 8px; }
+    .warning-box p { font-size: 0.88rem; color: #7f1d1d; }
 
-    .cta {
+    .offer {
       background: var(--bg);
       color: #fff;
       text-align: center;
-      padding: 48px 0;
+      padding: 52px 0;
     }
-    .cta .price { display: block; font-size: 2rem; font-weight: 800; margin: 12px 0 20px; }
-    .cta p { color: #cbd5e1; }
+    .offer .section-label { color: #4ade80; }
+    .offer h2 { color: #fff; }
+    .offer .price-big {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin: 12px 0 8px;
+    }
+    .offer .muted {
+      color: #94a3b8;
+      font-size: 0.92rem;
+      margin-bottom: 20px;
+    }
+    .offer .btn { margin: 0 auto; }
+
+    .acesso-bar {
+      text-align: center;
+      padding: 18px 20px;
+      background: #f1f5f9;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .acesso-bar a { color: var(--accent-dark); font-weight: 700; }
 
     footer {
       background: var(--bg);
       color: #94a3b8;
+      padding: 28px 0;
       text-align: center;
-      padding: 24px 0;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
+    }
+    footer a { color: #4ade80; font-weight: 600; }
+
+    @media (max-width: 480px) {
+      .nav-links a.secondary { display: none; }
+      .hero { padding: 40px 0 48px; }
     }
   </style>
+
   <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -208,116 +281,170 @@ src="https://www.facebook.com/tr?id=1379554427499136&ev=PageView&noscript=1"
 <!-- End Meta Pixel Code -->
 </head>
 <body>
+
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="nav-logo">Cursos Técnicos <span>Práticos</span></div>
+      <div class="nav-links">
+        <a class="secondary" href="./acesso.html">Já comprei</a>
+        <a class="nav-cta" href="./checkout.html?produto=1">Quero acessar — R$ 19,90</a>
+      </div>
+    </div>
+  </nav>
+
   <header class="hero">
     <div class="container">
-      <div class="badge">Brasil 2026 · PDF digital</div>
+      <div class="badge">Curso digital · Brasil</div>
       <h1>Energia Solar Fotovoltaica — Guia Prático Essencial</h1>
-      <p class="subtitle">Do primeiro contato com o cliente até a conexão, comissionamento e manutenção.</p>
-      <div class="price-box">
+      <p class="hero-sub">Fundamentos · Projeto · Instalação · Homologação · Manutenção · Diagnóstico</p>
+      <p class="hero-desc">
+        Curso progressivo para iniciantes. Do funcionamento do sistema ao diagnóstico de campo,
+        com diagramas, procedimentos, checklists e exercícios com resposta comentada.
+      </p>
+      <div class="price-row">
         <div class="price">R$ 19,90</div>
         <div class="price-note">pagamento único · Pix</div>
       </div>
-      <a class="btn btn-primary" href="./checkout.html?produto=1">Quero acessar o guia</a>
+      <a class="btn" href="./checkout.html?produto=1">Quero acessar o material</a>
+      <p class="hero-note">Liberação após confirmação do pagamento · download protegido</p>
     </div>
   </header>
 
   <section>
     <div class="container">
-      <h2>Para quem é este guia</h2>
-      <p class="lead">Quem quer entender o fluxo real de um projeto solar no contexto brasileiro, com linguagem clara e foco prático.</p>
-      <ul class="list">
-        <li>Iniciantes que precisam de uma base organizada</li>
-        <li>Quem atua ou pretende atuar com energia solar</li>
-        <li>Quem busca material objetivo, sem enrolação</li>
-      </ul>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <h2>O que o material cobre</h2>
-      <div class="cards">
-        <div class="card">
-          <h3>Atendimento e proposta</h3>
-          <p>Do primeiro contato com o cliente até a montagem da proposta comercial.</p>
-        </div>
-        <div class="card">
-          <h3>Documentação</h3>
-          <p>Visão geral dos documentos e etapas administrativas mais comuns.</p>
-        </div>
-        <div class="card">
-          <h3>Conexão com a distribuidora</h3>
-          <p>Fluxo típico de solicitação e acompanhamento junto à concessionária.</p>
-        </div>
-        <div class="card">
-          <h3>Comissionamento e manutenção</h3>
-          <p>Cuidados na entrega do sistema e práticas de manutenção preventiva.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <h2>Benefícios práticos</h2>
-      <ul class="list">
-        <li>Visão completa do processo, da prospecção à manutenção</li>
-        <li>Linguagem clara, sem jargão desnecessário</li>
-        <li>Foco no dia a dia do mercado brasileiro</li>
-        <li>Material em PDF, para consultar no celular ou no computador</li>
-      </ul>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <h2>O que você recebe</h2>
-      <div class="highlight">
-        <p>
-          <strong>PDF digital</strong> com o guia completo.<br>
-          Acesso liberado após a confirmação do pagamento via Pix.<br>
-          Download protegido — o arquivo não fica exposto publicamente.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <h2>Atualizado para o contexto brasileiro</h2>
+      <div class="section-label">A proposta</div>
+      <h2>Não começa pelo kit pronto. Começa pelo porquê.</h2>
       <p class="lead">
-        O material considera o cenário atual do setor de energia solar no Brasil,
-        com ênfase em etapas práticas e na relação com clientes e distribuidoras.
+        Quem pula direto para o “kit pronto” sem entender tensão, corrente, sombra e proteção
+        acaba acompanhando ou instalando sistemas que funcionam mal — ou inseguros.
+        Este material segue a ordem em que um profissional precisa aprender.
+      </p>
+      <ul class="list">
+        <li>Explicar como funciona um sistema fotovoltaico conectado à rede</li>
+        <li>Reconhecer componentes e ler folha de dados de módulo e inversor</li>
+        <li>Fazer pré-dimensionamento e entender a janela do inversor</li>
+        <li>Acompanhar instalação, comissionamento e homologação com a distribuidora</li>
+        <li>Planejar manutenção e aplicar o método sintoma → hipótese → teste → diagnóstico</li>
+      </ul>
+    </div>
+  </section>
+
+  <section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="container">
+      <div class="section-label">Para quem é</div>
+      <h2>Iniciante a intermediário inicial</h2>
+      <p class="lead">
+        Para quem quer entender, acompanhar e — com qualificação e supervisão — atuar em
+        sistemas fotovoltaicos on-grid residenciais e comerciais de pequeno porte.
+      </p>
+      <div class="card-soft">
+        <h3>Você se identifica se:</h3>
+        <ul>
+          <li>está começando e quer base sólida, sem pular etapas;</li>
+          <li>já acompanha obras e precisa organizar o conhecimento;</li>
+          <li>busca material com checklists e exercícios, não só dicas soltas.</li>
+        </ul>
+      </div>
+      <div class="pill-row">
+        <span class="pill">127 / 220 V · 60 Hz</span>
+        <span class="pill">Micro e minigeração</span>
+        <span class="pill">Contexto Brasil</span>
+        <span class="pill">Semáforo de responsabilidade</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-label">Conteúdo</div>
+      <h2>O que você encontra no material</h2>
+      <ul class="list">
+        <li>11 módulos progressivos — da base à prática profissional</li>
+        <li>Diagramas técnicos e procedimentos com “como verificar se deu certo”</li>
+        <li>Checklists de segurança, instalação, comissionamento e manutenção</li>
+        <li>Exercícios com resposta comentada</li>
+        <li>Projeto final e avaliação com gabarito</li>
+        <li>Semáforo verde / amarelo / vermelho: o que o iniciante pode e não pode fazer sozinho</li>
+        <li>Anexos: regras de ouro de campo, fórmulas de bolso e glossário</li>
+      </ul>
+    </div>
+  </section>
+
+  <section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="container">
+      <div class="section-label">Módulos</div>
+      <h2>Jornada do curso</h2>
+      <p class="lead">A ordem em que um profissional de verdade precisa aprender.</p>
+      <div class="mods">
+        <div class="mod"><strong>1</strong> Como usar este curso</div>
+        <div class="mod"><strong>2</strong> Fundamentos de energia solar</div>
+        <div class="mod"><strong>3</strong> O sistema fotovoltaico e seus componentes</div>
+        <div class="mod"><strong>4</strong> Ferramentas e instrumentos</div>
+        <div class="mod"><strong>5</strong> Segurança</div>
+        <div class="mod"><strong>6</strong> Projeto e dimensionamento</div>
+        <div class="mod"><strong>7</strong> Instalação passo a passo</div>
+        <div class="mod"><strong>8</strong> Comissionamento, homologação e entrega</div>
+        <div class="mod"><strong>9</strong> Operação e manutenção</div>
+        <div class="mod"><strong>10</strong> Diagnóstico profissional</div>
+        <div class="mod"><strong>11</strong> Prática profissional e mercado</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-label">O que você recebe</div>
+      <h2>Acesso digital após o Pix</h2>
+      <ul class="list">
+        <li>PDF digital completo do curso</li>
+        <li>Liberação após confirmação do pagamento</li>
+        <li>Download protegido (link temporário e seguro)</li>
+        <li>Possibilidade de recuperar o acesso pelo e-mail da compra</li>
+      </ul>
+      <p class="lead" style="margin-top:16px;font-size:0.9rem">
+        Já comprou? <a href="./acesso.html" style="color:var(--accent-dark);font-weight:700">Acesse seus cursos aqui</a>.
       </p>
     </div>
   </section>
 
   <section>
     <div class="container">
-      <h2>Aviso importante</h2>
-      <div class="disclaimer">
-        Este guia tem caráter informativo e educacional. Não substitui normas técnicas,
-        regulamentos das distribuidoras, orientações de órgãos competentes nem o trabalho
-        de profissionais habilitados. Sempre consulte a legislação vigente e as exigências
-        específicas da sua região e da concessionária local.
+      <div class="warning-box">
+        <h3>Aviso importante</h3>
+        <p>
+          Este é um <strong>material educacional</strong>. Não substitui projeto e responsabilidade técnica
+          por profissional habilitado, formação profissional, treinamentos exigidos (eletricidade e trabalho em altura),
+          as normas técnicas, as regras da distribuidora nem o manual e a folha de dados dos equipamentos.
+          Valores de tensão, corrente, potência e proteções dependem do projeto e dos equipamentos reais.
+        </p>
       </div>
     </div>
   </section>
 
-  <section class="cta">
+  <section class="offer">
     <div class="container">
-      <h2>Comece agora</h2>
-      <p>Acesso digital após confirmação do Pix.</p>
-      <span class="price">R$ 19,90</span>
-      <a class="btn btn-primary" href="./checkout.html?produto=1">
-        Quero acessar o guia
-      </a>
+      <div class="section-label">Oferta</div>
+      <h2>Acesse o material completo</h2>
+      <div class="price-big">R$ 19,90</div>
+      <p class="muted">Pagamento único via Pix · liberação após confirmação</p>
+      <a class="btn btn-block" href="./checkout.html?produto=1">Quero acessar o material</a>
     </div>
   </section>
 
+  <div class="acesso-bar">
+    Já comprou este ou outro curso?
+    <a href="./acesso.html">Recuperar acesso com o e-mail da compra</a>
+  </div>
+
   <footer>
     <div class="container">
-      Pagamento processado com segurança pelo Mercado Pago · Pix
+      <p>Material educacional · Não substitui projeto por responsável técnico habilitado.</p>
+      <p style="margin-top:8px">
+        <a href="./">Energia Solar</a> ·
+        <a href="./ar-condicionado.html">Ar-Condicionado</a> ·
+        <a href="./acesso.html">Meus cursos</a>
+      </p>
+      <p style="margin-top:10px">© 2026 Cursos Técnicos Práticos · Brasil</p>
     </div>
   </footer>
 
